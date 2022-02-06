@@ -22,12 +22,14 @@ public class UsuarioRepo extends MySQLRepositorio<Usuario, String> {
     }
 
     @Override
-    public Usuario editar(Usuario entidad) {
+    public Usuario editar(Usuario entidad, String id) {
         return null;
     }
 
     @Override
-    public Usuario eliminar(Usuario entidad) {
+    public Usuario eliminar(String id) {
         return null;
     }
+
+
 }

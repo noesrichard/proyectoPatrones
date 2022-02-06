@@ -1,5 +1,6 @@
 package com.libreria.catalogo.entidad;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Usuario {
@@ -10,14 +11,19 @@ public class Usuario {
 
     private String username, password;
 
-    private List<Permiso> permisos;
+    private List<Permiso> permisos = new ArrayList<>();
 
     private Usuario() {
     }
 
+    private Usuario(Permiso permiso){
+
+        permisos.add(permiso);
+    }
+
     public static Usuario _getUsuario(){
         if(usuario == null) {
-            return new Usuario();
+            return new Usuario(Permiso.LEER);
         }
         return usuario;
     }

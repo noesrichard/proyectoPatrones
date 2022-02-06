@@ -10,8 +10,8 @@ public interface Repositorio<T, K> {
 
     T guardar(T entidad);
 
-    T editar(T entidad);
+    T editar(T entidad, K id);
 
-    T eliminar(T entidad);
+    T eliminar(K id);
 
 }
