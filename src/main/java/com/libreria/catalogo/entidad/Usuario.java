@@ -4,17 +4,22 @@ import java.util.List;
 
 public class Usuario {
 
+    public static final String LEER = "LEER", CREAR="CREAR", EDITAR="EDITAR", ELIMINAR="ELIMINAR";
+
+    public static final Usuario usuario = null;
+
     private String username, password;
 
     private List<String> permisos;
 
-    public Usuario() {
+    private Usuario() {
     }
 
-    public Usuario(String username, String password, List<String> permisos) {
-        this.username = username;
-        this.password = password;
-        this.permisos = permisos;
+    public Usuario getUsuario(){
+        if(usuario == null) {
+            return new Usuario();
+        }
+        return usuario;
     }
 
     public boolean checkPermiso(String permiso){

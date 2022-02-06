@@ -1,4 +1,13 @@
 package com.libreria.compartido;
 
-public interface Service {
+import java.util.List;
+
+public interface Service<T> {
+
+    List<T> listar(T entidad);
+    T buscar(T entidad);
+    T guardar(T entidad);
+    T editar(T entidad);
+    T eliminar(T entidad);
+
 }
