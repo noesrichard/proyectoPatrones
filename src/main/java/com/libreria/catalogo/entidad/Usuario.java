@@ -6,23 +6,23 @@ public class Usuario {
 
     public static final String LEER = "LEER", CREAR="CREAR", EDITAR="EDITAR", ELIMINAR="ELIMINAR";
 
-    public static final Usuario usuario = null;
+    private static final Usuario usuario = null;
 
     private String username, password;
 
-    private List<String> permisos;
+    private List<Permiso> permisos;
 
     private Usuario() {
     }
 
-    public Usuario getUsuario(){
+    public static Usuario _getUsuario(){
         if(usuario == null) {
             return new Usuario();
         }
         return usuario;
     }
 
-    public boolean checkPermiso(String permiso){
+    public boolean tienePermiso(Permiso permiso){
         return permisos.contains(permiso);
     }
 
@@ -42,11 +42,11 @@ public class Usuario {
         this.password = password;
     }
 
-    public List<String> getPermisos() {
+    public List<Permiso> getPermisos() {
         return permisos;
     }
 
-    public void setPermisos(List<String> permisos) {
+    public void setPermisos(List<Permiso> permisos) {
         this.permisos = permisos;
     }
 }

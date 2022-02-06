@@ -2,7 +2,7 @@ package com.libreria.compartido;
 
 import java.util.List;
 
-public interface Service<T> {
+public interface Servicio<T> {
 
     List<T> listar(T entidad);
     T buscar(T entidad);

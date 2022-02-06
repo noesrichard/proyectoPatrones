@@ -2,11 +2,11 @@ package com.libreria.catalogo.servicios;
 
 import com.libreria.catalogo.entidad.Libro;
 import com.libreria.compartido.Repositorio;
-import com.libreria.compartido.Service;
+import com.libreria.compartido.Servicio;
 
 import java.util.List;
 
-public class LibroService implements Service<Libro> {
+public class LibroService implements Servicio<Libro> {
 
     Repositorio repoLibro;
     public LibroService(Repositorio repoLibro){
