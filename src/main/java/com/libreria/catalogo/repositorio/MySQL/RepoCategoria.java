@@ -1,6 +1,7 @@
 package com.libreria.catalogo.repositorio.MySQL;
 
 import com.libreria.catalogo.entidad.Categoria;
+import com.libreria.compartido.MySQLRepositorio;
 
 import java.util.List;
 

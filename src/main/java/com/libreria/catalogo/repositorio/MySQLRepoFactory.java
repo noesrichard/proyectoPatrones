@@ -1,14 +1,11 @@
 package com.libreria.catalogo.repositorio;
 
-import com.libreria.catalogo.repositorio.MySQL.MySQLRepositorio;
+import com.libreria.compartido.MySQLRepositorio;
 import com.libreria.catalogo.repositorio.MySQL.RepoAutor;
 import com.libreria.catalogo.repositorio.MySQL.RepoLibro;
 import com.libreria.compartido.Conexion;
-import com.libreria.compartido.Repositorio;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.List;
 
 public class MySQLRepoFactory {
 

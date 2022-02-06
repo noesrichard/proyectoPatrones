@@ -1,4 +1,4 @@
-package com.libreria.catalogo.repositorio.MySQL;
+package com.libreria.compartido;
 
 import com.libreria.compartido.Conexion;
 import com.libreria.compartido.Repositorio;

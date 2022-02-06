@@ -1,7 +1,7 @@
 package com.libreria.catalogo.repositorio.MySQL;
 
 import com.libreria.catalogo.entidad.Autor;
-import com.libreria.catalogo.repositorio.MySQL.MySQLRepositorio;
+import com.libreria.compartido.MySQLRepositorio;
 
 import java.util.List;
 
