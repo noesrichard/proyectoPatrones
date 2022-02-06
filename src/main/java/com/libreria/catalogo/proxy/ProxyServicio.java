@@ -27,7 +27,7 @@ public class ProxyServicio<T> implements Servicio<T> {
 
     @Override
     public T buscar(T entidad) {
-        return null;
+        return servicio.buscar(entidad);
     }
 
 

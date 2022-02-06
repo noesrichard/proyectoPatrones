@@ -5,18 +5,18 @@ import com.libreria.catalogo.entidad.Categoria;
 
 public class Libro{
     private String id, nombre, editorial;
-    private Autor autor;
-    private Categoria categoria;
+    private String autor;
+    private String categoria;
 
-    public Categoria getCategoria() {
+    public String getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(Categoria categoria) {
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
-    public Libro(String id, String nombre, String editorial, Autor autor, Categoria categoria) {
+    public Libro(String id, String nombre, String editorial, String autor, String categoria) {
         this.id = id;
         this.nombre = nombre;
         this.editorial = editorial;
@@ -48,11 +48,11 @@ public class Libro{
         this.editorial = editorial;
     }
 
-    public Autor getAutor() {
+    public String getAutor() {
         return autor;
     }
 
-    public void setAutor(Autor autor) {
+    public void setAutor(String autor) {
         this.autor = autor;
     }
 }
