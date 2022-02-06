@@ -19,6 +19,6 @@ public class Testing {
         Repositorio repoAutor = fabrica.getRepositorio(MySQLRepoFactory.AUTOR);
         Servicio autorService = new AutorService(repoAutor);
         ProxyServicio<Autor> proxyServicioAutor = new ProxyServicio<Autor>(autorService,usuario);
-        System.out.println(proxyServicioAutor.listar().get(0).toString());
+        System.out.println(proxyServicioAutor.buscar(new Autor("1", "", "")).toString());
     }
 }

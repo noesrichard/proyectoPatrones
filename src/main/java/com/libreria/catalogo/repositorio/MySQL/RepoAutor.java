@@ -66,7 +66,7 @@ public class RepoAutor extends MySQLRepositorio<Autor, String> {
             ps.setString(1, entidad.getNombre());
             ps.setString(2,entidad.getApellido());
             ps.executeUpdate();
-            conexion.commit();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -94,7 +94,6 @@ public class RepoAutor extends MySQLRepositorio<Autor, String> {
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
-            conexion.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -109,7 +108,7 @@ public class RepoAutor extends MySQLRepositorio<Autor, String> {
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
-            conexion.commit();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -88,11 +88,11 @@ public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
-            conexion.commit();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return porId(id);
     }
 
     @Override
