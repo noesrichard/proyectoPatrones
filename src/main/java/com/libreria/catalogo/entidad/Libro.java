@@ -1,7 +1,5 @@
 package com.libreria.catalogo.entidad;
 
-import com.libreria.catalogo.entidad.Autor;
-import com.libreria.catalogo.entidad.Categoria;
 
 public class Libro{
     private String id, nombre, editorial;

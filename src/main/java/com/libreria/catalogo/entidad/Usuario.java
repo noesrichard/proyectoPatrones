@@ -16,6 +16,8 @@ public class Usuario {
     private Usuario() {
     }
 
+
+
     private Usuario(Permiso permiso){
 
         permisos.add(permiso);

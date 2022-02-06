@@ -95,7 +95,7 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
 
     @Override
     public Libro editar(Libro entidad, String id) {
-        sql="UPDATE FROM libro SET nombre="+entidad.getNombre() +
+        sql="UPDATE  libro SET nombre="+entidad.getNombre() +
                 ", editorial="+entidad.getEditorial() + ", autor="+entidad.getAutor() +
                 ", categoria=" + entidad.getCategoria();
         try {

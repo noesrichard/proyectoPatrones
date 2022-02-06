@@ -90,7 +90,7 @@ public class RepoAutor extends MySQLRepositorio<Autor, String> {
 
     @Override
     public Autor editar(Autor entidad, String id) {
-        sql = "UPDATE INTO autor SET nombre="+entidad.getNombre()+", apellido="+entidad.getApellido()+" WHERE id="+id;
+        sql = "UPDATE autor SET nombre="+entidad.getNombre()+", apellido="+entidad.getApellido()+" WHERE id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
