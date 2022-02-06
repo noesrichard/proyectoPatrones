@@ -18,8 +18,11 @@ public class ProxyServicio<T> implements Servicio<T> {
     }
 
     @Override
-    public List<T> listar(T entidad) {
-        return null;
+    public List<T> listar() {
+        if(usuario.tienePermiso(Permiso.LEER)) {
+            return servicio.listar();
+        }
+        return new ArrayList<T>();
     }
 
     @Override

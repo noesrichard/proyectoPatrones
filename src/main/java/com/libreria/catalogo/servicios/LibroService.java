@@ -14,7 +14,7 @@ public class LibroService implements Servicio<Libro> {
     }
 
     @Override
-    public List<Libro> listar(Libro entidad) {
+    public List<Libro> listar() {
         return null;
     }
 

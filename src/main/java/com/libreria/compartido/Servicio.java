@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Servicio<T> {
 
-    List<T> listar(T entidad);
+    List<T> listar();
     T buscar(T entidad);
     T guardar(T entidad);
     T editar(T entidad);
