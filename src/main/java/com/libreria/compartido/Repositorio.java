@@ -8,7 +8,7 @@ public interface Repositorio<T, K> {
 
     T porId(K id);
 
-    T crear(T entidad);
+    T guardar(T entidad);
 
     T editar(T entidad);
 

@@ -1,19 +1,25 @@
-package com.libreria.catalogo.entidad.articulo;
+package com.libreria.catalogo.entidad;
 
 import com.libreria.catalogo.entidad.Autor;
 import com.libreria.catalogo.entidad.Categoria;
-import com.libreria.catalogo.entidad.articulo.Articulo;
 
-public class Revista implements Articulo {
-
-    private String id, nombre, edicion;
+public class Libro{
+    private String id, nombre, editorial;
     private Autor autor;
     private Categoria categoria;
 
-    public Revista(String id, String nombre, String edicion, Autor autor, Categoria categoria) {
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public Libro(String id, String nombre, String editorial, Autor autor, Categoria categoria) {
         this.id = id;
         this.nombre = nombre;
-        this.edicion = edicion;
+        this.editorial = editorial;
         this.autor = autor;
         this.categoria = categoria;
     }
@@ -34,12 +40,12 @@ public class Revista implements Articulo {
         this.nombre = nombre;
     }
 
-    public String getEdicion() {
-        return edicion;
+    public String getEditorial() {
+        return editorial;
     }
 
-    public void setEdicion(String edicion) {
-        this.edicion = edicion;
+    public void setEditorial(String editorial) {
+        this.editorial = editorial;
     }
 
     public Autor getAutor() {
@@ -48,13 +54,5 @@ public class Revista implements Articulo {
 
     public void setAutor(Autor autor) {
         this.autor = autor;
-    }
-
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
     }
 }
