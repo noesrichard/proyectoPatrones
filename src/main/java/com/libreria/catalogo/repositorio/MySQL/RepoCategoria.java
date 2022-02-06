@@ -22,12 +22,14 @@ public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
     }
 
     @Override
-    public Categoria editar(Categoria entidad) {
+    public Categoria editar(Categoria entidad, String id) {
         return null;
     }
 
     @Override
-    public Categoria eliminar(Categoria entidad) {
+    public Categoria eliminar(String id) {
         return null;
     }
+
+
 }

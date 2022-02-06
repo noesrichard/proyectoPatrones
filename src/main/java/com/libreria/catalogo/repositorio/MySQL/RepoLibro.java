@@ -24,12 +24,14 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
     }
 
     @Override
-    public Libro editar(Libro entidad) {
+    public Libro editar(Libro entidad, String id) {
         return null;
     }
 
     @Override
-    public Libro eliminar(Libro entidad) {
+    public Libro eliminar(String id) {
         return null;
     }
+
+
 }
