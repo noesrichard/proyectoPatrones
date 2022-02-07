@@ -15,26 +15,26 @@ public class LibroService implements Servicio<Libro> {
 
     @Override
     public List<Libro> listar() {
-        return null;
+        return repoLibro.listar();
     }
 
     @Override
     public Libro buscar(Libro entidad) {
-        return null;
+        return (Libro) repoLibro.porId(entidad.getId());
     }
 
     @Override
     public Libro guardar(Libro entidad) {
-        return null;
+        return (Libro) repoLibro.guardar(entidad);
     }
 
     @Override
     public Libro editar(Libro entidad) {
-        return null;
+        return (Libro) repoLibro.editar(entidad, entidad.getId());
     }
 
     @Override
     public Libro eliminar(Libro entidad) {
-        return null;
+        return (Libro) repoLibro.eliminar(entidad.getId());
     }
 }

@@ -1,7 +1,7 @@
 package com.libreria.catalogo.repositorio.MySQL;
 
-import com.libreria.catalogo.entidad.Autor;
 import com.libreria.catalogo.entidad.Categoria;
+import com.libreria.catalogo.entidad.Inventario;
 import com.libreria.compartido.MySQLRepositorio;
 
 import java.sql.PreparedStatement;
@@ -10,85 +10,84 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
+public class RepoInventario extends MySQLRepositorio<Inventario, String> {
 
     private String sql;
     private PreparedStatement ps;
     private ResultSet rs;
-
     @Override
-    public List<Categoria> listar() {
-        List<Categoria> lista = new ArrayList<>();
-        sql = "SELECT * FROM categoria";
+    public List<Inventario> listar() {
+        List<Inventario> lista = new ArrayList<>();
+        sql = "SELECT * FROM inventario";
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
                 lista.add(
-                        new Categoria(
+                        new Inventario(
                                 rs.getString("id"),
-                                rs.getString("nombre")
+                                rs.getString("libro"),
+                                rs.getString("prestado")
                         )
                 );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return lista;
     }
 
     @Override
-    public Categoria porId(String id) {
-        sql = "SELECT * FROM categoria WHERE id="+id;
-        Categoria categoria = null;
-
+    public Inventario porId(String id) {
+        Inventario inventario = null;
+        sql = "SELECT * FROM inventario WHERE id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
-                categoria = new Categoria(rs.getString("id"), rs.getString("nombre"));
+                inventario = new Inventario( rs.getString("id"),
+                        rs.getString("libro"),
+                        rs.getString("prestado"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return categoria;
+
+        return inventario;
     }
 
     @Override
-    public Categoria guardar(Categoria entidad) {
-        sql = "INSERT INTO categoria (nombre) VALUES (?)";
+    public Inventario guardar(Inventario entidad) {
+        sql = "INSERT INTO inventario (libro,prestado) VALUES (?,?)";
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
-            conexion.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        sql = "SELECT * FROM categoria ORDER BY id DESC LIMIT 1";
-        Categoria categoria = null;
+
+        sql = "SELECT * FROM inventario ORDER BY id DESC LIMIT 1";
+        Inventario inventario = null;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
-                categoria = new Categoria(
-                        rs.getString("id"),
-                        rs.getString("nombre")
-                );
+                inventario = new Inventario( rs.getString("id"),
+                        rs.getString("libro"),
+                        rs.getString("prestado"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return categoria;
+        return inventario;
     }
 
     @Override
-    public Categoria editar(Categoria entidad, String id) {
-        sql = "UPDATE categoria SET nombre="+entidad.getNombre()+" WHERE id="+id;
+    public Inventario editar(Inventario entidad, String id) {
+       sql = "UPDATE inventario SET libro="+entidad.getLibro() + ", prestado="+entidad.getPrestado()+" WHERE id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -96,17 +95,15 @@ public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
     }
 
     @Override
-    public Categoria eliminar(String id) {
-        Categoria categoria = porId(id);
-        sql = "DELETE FROM categoria WHERE id=" + id;
+    public Inventario eliminar(String id) {
+        Inventario inventario = porId(id);
+        sql = "DELETE FROM inventario WHERE id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return categoria;
+        return inventario;
     }
-
-
 }
