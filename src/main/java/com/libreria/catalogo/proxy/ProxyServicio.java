@@ -35,16 +35,25 @@ public class ProxyServicio<T> implements Servicio<T> {
 
     @Override
     public T guardar(T entidad) {
+        if(usuario.tienePermiso(Permiso.CREAR)) {
+            return servicio.guardar(entidad);
+        }
         return null;
     }
 
     @Override
     public T editar(T entidad) {
+        if(usuario.tienePermiso(Permiso.EDITAR)) {
+            return servicio.editar(entidad);
+        }
         return null;
     }
 
     @Override
     public T eliminar(T entidad) {
+        if(usuario.tienePermiso(Permiso.ELIMINAR)) {
+            return servicio.eliminar(entidad);
+        }
         return null;
     }
 }
