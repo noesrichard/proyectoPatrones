@@ -1,8 +1,7 @@
 package com.libreria.catalogo.proxy;
 
-import com.libreria.catalogo.entidad.Libro;
 import com.libreria.catalogo.entidad.Permiso;
-import com.libreria.catalogo.entidad.Usuario;
+import com.libreria.catalogo.entidad.UsuarioLoggeado;
 import com.libreria.compartido.Servicio;
 
 import java.util.ArrayList;
@@ -10,9 +9,9 @@ import java.util.List;
 
 public class ProxyServicio<T> implements Servicio<T> {
     private Servicio<T> servicio;
-    private Usuario usuario;
+    private UsuarioLoggeado usuario;
 
-    public ProxyServicio(Servicio<T> servicio, Usuario usuario){
+    public ProxyServicio(Servicio<T> servicio, UsuarioLoggeado usuario){
         this.servicio = servicio;
         this.usuario = usuario;
     }
@@ -27,7 +26,10 @@ public class ProxyServicio<T> implements Servicio<T> {
 
     @Override
     public T buscar(T entidad) {
-        return servicio.buscar(entidad);
+        if(usuario.tienePermiso(Permiso.LEER)) {
+            return servicio.buscar(entidad);
+        }
+        return null;
     }
 
 

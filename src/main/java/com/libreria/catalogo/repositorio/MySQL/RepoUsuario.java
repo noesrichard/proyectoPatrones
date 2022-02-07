@@ -1,7 +1,6 @@
 package com.libreria.catalogo.repositorio.MySQL;
 
-import com.libreria.catalogo.entidad.Libro;
-import com.libreria.catalogo.entidad.UserDatabase;
+import com.libreria.catalogo.entidad.Permiso;
 import com.libreria.catalogo.entidad.Usuario;
 import com.libreria.compartido.MySQLRepositorio;
 
@@ -11,22 +10,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsuarioRepo extends MySQLRepositorio<UserDatabase, String> {
+public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
 
     private String sql;
     private PreparedStatement ps;
     private ResultSet rs;
     @Override
-    public List<UserDatabase> listar() {
-        List<UserDatabase> lista = new ArrayList<>();
+    public List<Usuario> listar() {
+        List<Usuario> lista = new ArrayList<>();
         sql="SELECT * FROM usuario";
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
-                lista.add(
-                        new UserDatabase(rs.getString("usuario"), rs.getString("password"))
-                );
+                Usuario user = new Usuario(rs.getString("username"), rs.getString("password"));
+                user.setPermisos(getPermisosUsuario(user.getUsername()));
+                lista.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -35,14 +34,15 @@ public class UsuarioRepo extends MySQLRepositorio<UserDatabase, String> {
     }
 
     @Override
-    public UserDatabase porId(String id) {
-        UserDatabase user = null;
-        sql="SELECT * from usuario WHERE usuario="+id;
+    public Usuario porId(String id) {
+        Usuario user = null;
+        sql="SELECT username,password from usuario WHERE username="+id;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while(rs.next()){
-                user = new UserDatabase(rs.getString("usuario"), rs.getString("password"));
+                user = new Usuario(rs.getString("username"), rs.getString("password"));
+                user.setPermisos(getPermisosUsuario(user.getUsername()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,8 +51,8 @@ public class UsuarioRepo extends MySQLRepositorio<UserDatabase, String> {
     }
 
     @Override
-    public UserDatabase guardar(UserDatabase entidad) {
-        sql = "INSERT INTO usuario (usuario, password) VALUES(?,?)";
+    public Usuario guardar(Usuario entidad) {
+        sql = "INSERT INTO usuario (username, password) VALUES(?,?)";
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
@@ -63,7 +63,7 @@ public class UsuarioRepo extends MySQLRepositorio<UserDatabase, String> {
     }
 
     @Override
-    public UserDatabase editar(UserDatabase entidad, String id) {
+    public Usuario editar(Usuario entidad, String id) {
         sql = "UPDATE usuario SET password="+entidad.getPassword()+" WHERE username="+id;
         try {
             ps = conexion.prepareStatement(sql);
@@ -75,8 +75,8 @@ public class UsuarioRepo extends MySQLRepositorio<UserDatabase, String> {
     }
 
     @Override
-    public UserDatabase eliminar(String id) {
-        UserDatabase user = porId(id);
+    public Usuario eliminar(String id) {
+        Usuario user = porId(id);
         sql = "DELETE FROM usuario WHERE username="+id;
         try {
             ps = conexion.prepareStatement(sql);
@@ -87,5 +87,19 @@ public class UsuarioRepo extends MySQLRepositorio<UserDatabase, String> {
         return user;
     }
 
+    private List<Permiso> getPermisosUsuario(String username){
+        List<Permiso> permisos = new ArrayList<Permiso>();
+        sql="SELECT rol from roles_usuario WHERE username="+username;
+        try {
+            ps = conexion.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                permisos.add(Permiso.getById(rs.getInt("rol")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return permisos;
+    }
 
 }

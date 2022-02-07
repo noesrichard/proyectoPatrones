@@ -1,41 +1,43 @@
 package com.libreria.catalogo.servicios;
 
-import com.libreria.catalogo.entidad.UserDatabase;
+import com.libreria.catalogo.entidad.Permiso;
+import com.libreria.catalogo.entidad.Usuario;
 import com.libreria.compartido.Repositorio;
 import com.libreria.compartido.Servicio;
 
 import java.util.List;
 
-public class UsuarioService implements Servicio<UserDatabase> {
+public class UsuarioService implements Servicio<Usuario> {
 
-    Repositorio repositorio;
+    Repositorio<Usuario, String> repositorio;
 
-    public UsuarioService(Repositorio repositorio) {
+    public UsuarioService(Repositorio<Usuario, String> repositorio) {
         this.repositorio = repositorio;
     }
 
     @Override
-    public List<UserDatabase> listar() {
+    public List<Usuario> listar() {
         return repositorio.listar();
     }
 
     @Override
-    public UserDatabase buscar(UserDatabase entidad) {
-        return (UserDatabase) repositorio.porId(entidad.getUsername());
+    public Usuario buscar(Usuario entidad) {
+        return  repositorio.porId(entidad.getUsername());
     }
 
     @Override
-    public UserDatabase guardar(UserDatabase entidad) {
-        return (UserDatabase) repositorio.guardar(entidad);
+    public Usuario guardar(Usuario entidad) {
+        return  repositorio.guardar(entidad);
     }
 
     @Override
-    public UserDatabase editar(UserDatabase entidad) {
-        return (UserDatabase) repositorio.editar(entidad, entidad.getUsername());
+    public Usuario editar(Usuario entidad) {
+        return  repositorio.editar(entidad, entidad.getUsername());
     }
 
     @Override
-    public UserDatabase eliminar(UserDatabase entidad) {
-        return (UserDatabase) repositorio.eliminar(entidad.getUsername());
+    public Usuario eliminar(Usuario entidad) {
+        return  repositorio.eliminar(entidad.getUsername());
     }
+
 }

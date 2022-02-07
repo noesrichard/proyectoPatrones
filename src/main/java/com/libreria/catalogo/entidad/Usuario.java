@@ -4,57 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Usuario {
+        protected String username, password;
+        protected List<Permiso> permisos = new ArrayList<Permiso>();
 
-    public static final String LEER = "LEER", CREAR="CREAR", EDITAR="EDITAR", ELIMINAR="ELIMINAR";
-
-    private static final Usuario usuario = null;
-
-    private String username, password;
-
-    private List<Permiso> permisos = new ArrayList<>();
-
-    private Usuario() {
-    }
-
-
-
-    private Usuario(Permiso permiso){
-
-        permisos.add(permiso);
-    }
-
-    public static Usuario _getUsuario(){
-        if(usuario == null) {
-            return new Usuario(Permiso.LEER);
+        public List<Permiso> getPermisos() {
+                return permisos;
         }
-        return usuario;
-    }
 
-    public boolean tienePermiso(Permiso permiso){
-        return permisos.contains(permiso);
-    }
+        public void setPermisos(List<Permiso> permisos) {
+                this.permisos = permisos;
+        }
 
-    public String getUsername() {
-        return username;
-    }
+        public Usuario(){
+        }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+        public Usuario(String username, String password) {
+                this.username = username;
+                this.password = password;
+        }
 
-    public String getPassword() {
-        return password;
-    }
+        public String getUsername() {
+                return username;
+        }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+        public void setUsername(String username) {
+                this.username = username;
+        }
 
-    public List<Permiso> getPermisos() {
-        return permisos;
-    }
+        public String getPassword() {
+                return password;
+        }
 
-    public void setPermisos(List<Permiso> permisos) {
-        this.permisos = permisos;
-    }
+        public void setPassword(String password) {
+                this.password = password;
+        }
 }

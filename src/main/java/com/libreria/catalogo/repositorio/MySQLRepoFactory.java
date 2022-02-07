@@ -1,26 +1,27 @@
 package com.libreria.catalogo.repositorio;
 
+import com.libreria.catalogo.repositorio.MySQL.*;
 import com.libreria.compartido.MySQLRepositorio;
-import com.libreria.catalogo.repositorio.MySQL.RepoAutor;
-import com.libreria.catalogo.repositorio.MySQL.RepoLibro;
 import com.libreria.compartido.Conexion;
+import com.libreria.compartido.Repositorio;
 
 import java.sql.Connection;
 
-public class MySQLRepoFactory {
+public class MySQLRepoFactory implements RepoFactory{
 
-    public static final int LIBRO = 1, AUTOR = 2, CATEGORIA = 3;
+    public static final int LIBRO = 1, AUTOR = 2, CATEGORIA = 3, INVENTARIO = 4, USUARIO = 5;
     private Conexion con;
     private Connection conexion;
 
-    public MySQLRepositorio getRepositorio(int repositorio){
-        switch (repositorio) {
-            case LIBRO:
-                return new RepoLibro();
-            case AUTOR:
-                return new RepoAutor();
-            default:
-                return null;
-        }
+    @Override
+    public Repositorio getRepositorio(int repositorio){
+        return switch (repositorio) {
+            case LIBRO -> new RepoLibro();
+            case AUTOR -> new RepoAutor();
+            case CATEGORIA -> new RepoCategoria();
+            case INVENTARIO -> new RepoInventario();
+            case USUARIO -> new RepoUsuario();
+            default -> null;
+        };
     }
 }
