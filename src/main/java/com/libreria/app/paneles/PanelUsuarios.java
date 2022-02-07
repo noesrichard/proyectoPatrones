@@ -6,6 +6,8 @@ package com.libreria.app.paneles;
 
 import com.libreria.catalogo.entidad.Permiso;
 import com.libreria.catalogo.entidad.Usuario;
+import com.libreria.catalogo.entidad.UsuarioLoggeado;
+import com.libreria.catalogo.proxy.ProxyServicio;
 import com.libreria.compartido.Servicio;
 
 import javax.swing.event.ListSelectionEvent;
@@ -20,14 +22,14 @@ import java.util.List;
  */
 public class PanelUsuarios extends javax.swing.JPanel {
 
-    private Servicio servicio;
+    private ProxyServicio<Usuario> servicio;
     DefaultTableModel modelo;
     Usuario u;
     /**
      * Creates new form BasePanel
      */
     public PanelUsuarios(Servicio usuarioServicio) {
-        this.servicio = usuarioServicio;
+        this.servicio = new ProxyServicio<Usuario>(usuarioServicio, UsuarioLoggeado._getUsuario());
         initComponents();
         cargarTabla();
         listenerTabla();

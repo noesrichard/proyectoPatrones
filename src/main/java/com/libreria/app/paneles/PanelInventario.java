@@ -4,10 +4,8 @@
  */
 package com.libreria.app.paneles;
 
-import com.libreria.catalogo.entidad.Autor;
-import com.libreria.catalogo.entidad.Categoria;
-import com.libreria.catalogo.entidad.Inventario;
-import com.libreria.catalogo.entidad.Libro;
+import com.libreria.catalogo.entidad.*;
+import com.libreria.catalogo.proxy.ProxyServicio;
 import com.libreria.compartido.Servicio;
 
 import javax.swing.event.ListSelectionEvent;
@@ -21,7 +19,8 @@ import java.util.List;
  */
 public class PanelInventario extends javax.swing.JPanel implements Subscriptor{
 
-    private Servicio servicio, libroServicio;
+    ProxyServicio<Inventario> servicio;
+    ProxyServicio<Libro> libroServicio;
     DefaultTableModel modelo, modeloLibros;
     Inventario i;
 
@@ -29,8 +28,8 @@ public class PanelInventario extends javax.swing.JPanel implements Subscriptor{
      * Creates new form BasePanel
      */
     public PanelInventario(Servicio inventarioServicio, Servicio libroServicios) {
-        this.servicio = inventarioServicio;
-        this.libroServicio = libroServicios;
+        this.servicio = new ProxyServicio<Inventario>(inventarioServicio, UsuarioLoggeado._getUsuario());
+        this.libroServicio = new ProxyServicio<Libro>(libroServicios, UsuarioLoggeado._getUsuario());
         initComponents();
         cargarTabla();
         listenerTabla();

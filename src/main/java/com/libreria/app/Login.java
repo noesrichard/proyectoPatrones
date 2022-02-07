@@ -27,7 +27,7 @@ public class Login extends javax.swing.JFrame {
         fabricaRepositorios = new MySQLRepoFactory();
         fabricaServicios = new ServiciosFactory(fabricaRepositorios);
 
-         usuarioServicio = fabricaServicios.getServicio(ServiciosFactory.USUARIO);
+        usuarioServicio = fabricaServicios.getServicio(ServiciosFactory.USUARIO);
 
 
     }

@@ -8,11 +8,14 @@ import com.libreria.app.Observador;
 import com.libreria.catalogo.entidad.Autor;
 import com.libreria.catalogo.entidad.Categoria;
 import com.libreria.catalogo.entidad.Libro;
+import com.libreria.catalogo.entidad.UsuarioLoggeado;
+import com.libreria.catalogo.proxy.ProxyServicio;
 import com.libreria.compartido.Servicio;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,16 +25,19 @@ import java.util.List;
  */
 public class PanelLibros extends javax.swing.JPanel implements Subscriptor, Observador {
 
-    private Servicio libroServicio, autorServicio, categoriaServicio;
+    private ProxyServicio<Libro> libroServicio;
+    private ProxyServicio<Autor> autorServicio;
+    private ProxyServicio<Categoria> categoriaServicio;
     DefaultTableModel modeloLibros, modeloAutores, modeloCategorias;
     private List<Subscriptor> subscriptors = new ArrayList<Subscriptor>();
     /**
      * Creates new form BasePanel
      */
     public PanelLibros(Servicio libroServicio, Servicio autorServicio, Servicio categoriaServicio) {
-        this.libroServicio = libroServicio;
-        this.autorServicio = autorServicio;
-        this.categoriaServicio = categoriaServicio;
+        UsuarioLoggeado u = UsuarioLoggeado._getUsuario();
+        this.libroServicio = new ProxyServicio<Libro>(libroServicio, u);
+        this.autorServicio = new ProxyServicio<Autor>(autorServicio,u);
+        this.categoriaServicio = new ProxyServicio<Categoria>(categoriaServicio, u);
         initComponents();
         cargarTabla();
         cargarTablaAutores();
