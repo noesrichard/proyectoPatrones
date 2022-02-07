@@ -22,7 +22,7 @@ public class UsuarioService implements Servicio<Usuario> {
 
     @Override
     public Usuario buscar(Usuario entidad) {
-        return  repositorio.porId(entidad.getUsername());
+        return repositorio.porId(entidad.getUsername());
     }
 
     @Override

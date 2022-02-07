@@ -84,7 +84,7 @@ public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
 
     @Override
     public Categoria editar(Categoria entidad, String id) {
-        sql = "UPDATE categoria SET nombre="+entidad.getNombre()+" WHERE id="+id;
+        sql = "UPDATE categoria SET nombre='"+entidad.getNombre()+"' WHERE id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();

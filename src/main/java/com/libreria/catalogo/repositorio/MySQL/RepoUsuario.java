@@ -36,7 +36,7 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
     @Override
     public Usuario porId(String id) {
         Usuario user = null;
-        sql="SELECT username,password from usuario WHERE username="+id;
+        sql="SELECT username,password from usuario WHERE username='"+id+"'";
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -64,7 +64,7 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
 
     @Override
     public Usuario editar(Usuario entidad, String id) {
-        sql = "UPDATE usuario SET password="+entidad.getPassword()+" WHERE username="+id;
+        sql = "UPDATE usuario SET password="+entidad.getPassword()+" WHERE username='"+id+"'";
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
@@ -77,7 +77,7 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
     @Override
     public Usuario eliminar(String id) {
         Usuario user = porId(id);
-        sql = "DELETE FROM usuario WHERE username="+id;
+        sql = "DELETE FROM usuario WHERE username='"+id+"'";
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
@@ -89,7 +89,7 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
 
     private List<Permiso> getPermisosUsuario(String username){
         List<Permiso> permisos = new ArrayList<Permiso>();
-        sql="SELECT rol from roles_usuario WHERE username="+username;
+        sql="SELECT rol from roles_usuario WHERE usuario='"+username+"'";
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();

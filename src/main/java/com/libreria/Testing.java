@@ -19,9 +19,12 @@ public class Testing {
         ServiciosFactory fabricaServicios = new ServiciosFactory(fabrica);
 
         Servicio autorService = fabricaServicios.getServicio(ServiciosFactory.AUTOR);
-        Servicio userService = fabricaServicios.getServicio(ServiciosFactory.USUARIO);
+        Servicio<Usuario> userService = fabricaServicios.getServicio(ServiciosFactory.USUARIO);
 
-        UsuarioLoggeado usuarioLoggeado = (UsuarioLoggeado) userService.buscar(new Usuario("usuario", ""));
+        Usuario usuarioLoggeado = userService.buscar(new Usuario("usuario", ""));
+        usuario.setUsername(usuarioLoggeado.getUsername());
+        usuario.setPassword(usuarioLoggeado.getPassword());
+        usuario.setPermisos(usuarioLoggeado.getPermisos());
 
         ProxyServicio<Autor> proxyServicioAutor = new ProxyServicio<Autor>(autorService,usuario);
 
