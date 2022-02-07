@@ -39,7 +39,8 @@ public class Inventario {
         this.prestado = prestado;
     }
     public String [] dataAsVector(){
-        return new String[]{id, libro.getId(), libro.getNombre(), libro.getEditorial(), libro.getAutor().getNombre(),libro.getCategoria().getNombre(),prestado};
+        return new String[]{id, libro.getId(), libro.getNombre(), libro.getEditorial(), libro.getAutor().getNombre(),
+                libro.getCategoria().getNombre(),(prestado.equals("1")) ? "Si": "No"};
     }
 
 }

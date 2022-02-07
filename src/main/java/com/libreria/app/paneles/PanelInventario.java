@@ -61,7 +61,7 @@ public class PanelInventario extends javax.swing.JPanel implements Subscriptor{
             public void valueChanged(ListSelectionEvent e) {
                 if(tablaLibros.getSelectedRow() != -1) {
                     int fila = tablaLibros.getSelectedRow();
-                    txtLibro.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Id").getModelIndex()).toString());
+                    txtLibro.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Nombre").getModelIndex()).toString());
                     idLibro.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Id").getModelIndex()).toString());
 
                 }
