@@ -23,8 +23,5 @@ public class UsuarioLoggeado extends Usuario{
         return usuario;
     }
 
-    public boolean tienePermiso(Permiso permiso){
-        return permisos.contains(permiso);
-    }
 
 }

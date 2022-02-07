@@ -19,6 +19,10 @@ public enum Permiso{
         return texto;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public static Permiso getById(int id){
         for(Permiso p : values()) {
             if(p.id == id) {

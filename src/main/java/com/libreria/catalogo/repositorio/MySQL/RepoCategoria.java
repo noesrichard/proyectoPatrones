@@ -62,7 +62,6 @@ public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
             ps = conexion.prepareStatement(sql);
             ps.setString(1,entidad.getNombre());
             ps.executeUpdate();
-            conexion.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

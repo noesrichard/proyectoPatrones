@@ -2,14 +2,14 @@ package com.libreria.catalogo.entidad;
 
 public class Inventario {
     private String id;
-    private String libro;
+    private Libro libro;
     private String prestado;
 
 
     public Inventario() {
     }
 
-    public Inventario(String id, String libro, String prestado) {
+    public Inventario(String id, Libro libro, String prestado) {
         this.id = id;
         this.libro = libro;
         this.prestado = prestado;
@@ -23,11 +23,11 @@ public class Inventario {
         this.id = id;
     }
 
-    public String getLibro() {
+    public Libro getLibro() {
         return libro;
     }
 
-    public void setLibro(String libro) {
+    public void setLibro(Libro libro) {
         this.libro = libro;
     }
 
@@ -39,7 +39,7 @@ public class Inventario {
         this.prestado = prestado;
     }
     public String [] dataAsVector(){
-        return new String[]{id, libro,prestado};
+        return new String[]{id, libro.getId(), libro.getNombre(), libro.getEditorial(), libro.getAutor().getNombre(),libro.getCategoria().getNombre(),prestado};
     }
 
 }

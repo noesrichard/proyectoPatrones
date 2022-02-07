@@ -4,22 +4,113 @@
  */
 package com.libreria.app.paneles;
 
+import com.libreria.app.Observador;
+import com.libreria.catalogo.entidad.Autor;
+import com.libreria.catalogo.entidad.Categoria;
+import com.libreria.catalogo.entidad.Libro;
 import com.libreria.compartido.Servicio;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author carri
  */
-public class PanelLibros extends javax.swing.JPanel {
+public class PanelLibros extends javax.swing.JPanel implements Subscriptor, Observador {
 
-    private Servicio servicio;
-
+    private Servicio libroServicio, autorServicio, categoriaServicio;
+    DefaultTableModel modeloLibros, modeloAutores, modeloCategorias;
+    private List<Subscriptor> subscriptors = new ArrayList<Subscriptor>();
     /**
      * Creates new form BasePanel
      */
-    public PanelLibros(Servicio libroServicio) {
-        this.servicio = libroServicio;
+    public PanelLibros(Servicio libroServicio, Servicio autorServicio, Servicio categoriaServicio) {
+        this.libroServicio = libroServicio;
+        this.autorServicio = autorServicio;
+        this.categoriaServicio = categoriaServicio;
         initComponents();
+        cargarTabla();
+        cargarTablaAutores();
+        cargarTablaCategorias();
+        listenerTabla();
+        listenerTablaAutores();
+        listenerTablaCategorias();
+    }
+
+    private void cargarTabla(){
+        String [] titulos = {"Id", "Nombre", "Editorial", "Autor", "Categoria"};
+        List<Libro> autores = libroServicio.listar();
+        modeloLibros = new DefaultTableModel(null, titulos);
+        for(Libro a : autores) {
+            modeloLibros.addRow(a.dataAsVector());
+        }
+        tablaLibros.setModel(modeloLibros);
+    }
+
+
+    private void limpiar(){
+        txtId.setText("");
+        txtNombre.setText("");
+        txtEditorial.setText("");
+        txtCategoria.setText("");
+        txtAutor.setText("");
+        idAutor.setText("");
+        idCategoria.setText("");
+    }
+
+    private void listenerTabla(){
+        tablaLibros.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(tablaLibros.getSelectedRow() != -1) {
+                    int fila = tablaLibros.getSelectedRow();
+                    txtId.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Id").getModelIndex()).toString());
+                    txtNombre.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Nombre").getModelIndex()).toString());
+                    txtEditorial.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Editorial").getModelIndex()).toString());
+                    txtAutor.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Autor").getModelIndex()).toString());
+                    txtCategoria.setText(tablaLibros.getValueAt(fila, tablaLibros.getColumn("Categoria").getModelIndex()).toString());
+                }
+            }
+        });
+    }
+
+    private Libro crearObjeto(){
+        return new Libro(txtId.getText(), txtNombre.getText(), txtEditorial.getText(),
+               new Autor(idAutor.getText(), "", ""), new Categoria(idCategoria.getText(), "") );
+    }
+
+    private void crear(){
+        libroServicio.guardar(crearObjeto());
+        cargarTabla();
+        actualizar();
+    }
+
+    private void editar(){
+        libroServicio.editar(crearObjeto());
+        cargarTabla();
+        actualizar();
+    }
+
+    private void eliminar(){
+        libroServicio.eliminar(crearObjeto());
+        cargarTabla();
+        actualizar();
+    }
+
+    private boolean verificarNuevo(){
+        return (txtId.getText().equals(""));
+    }
+
+    private void accionGuardar(){
+        if(verificarNuevo()) {
+            crear();
+        }else {
+            editar();
+        }
     }
 
     /**
@@ -39,13 +130,21 @@ public class PanelLibros extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        comboAutores = new javax.swing.JComboBox<>();
-        comboCategorias = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        txtCategoria = new javax.swing.JTextField();
+        txtAutor = new javax.swing.JTextField();
+        idAutor = new javax.swing.JLabel();
+        idCategoria = new javax.swing.JLabel();
         panelTabla = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tabla = new javax.swing.JTable();
+        tablaLibros = new javax.swing.JTable();
+        panelTablaAutores = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaAutores = new javax.swing.JTable();
+        panelTablaCategorias = new javax.swing.JPanel();
+        scrollbar = new javax.swing.JScrollPane();
+        tablaCategorias = new javax.swing.JTable();
 
         pnlCampos.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -78,13 +177,15 @@ public class PanelLibros extends javax.swing.JPanel {
 
         jLabel3.setText("Editorial:");
 
-        comboAutores.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        comboCategorias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         jLabel4.setText("Autor:");
 
         jLabel5.setText("Categoria:");
+
+        txtAutor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAutorActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlCamposLayout = new javax.swing.GroupLayout(pnlCampos);
         pnlCampos.setLayout(pnlCamposLayout);
@@ -104,19 +205,25 @@ public class PanelLibros extends javax.swing.JPanel {
                         .addGap(12, 12, 12)
                         .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtEditorial, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(comboAutores, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(comboCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jLabel3)))
+                    .addComponent(btnNuevo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlCamposLayout.createSequentialGroup()
-                        .addComponent(btnNuevo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(idAutor)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtAutor))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlCamposLayout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(idCategoria))
+                        .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCamposLayout.createSequentialGroup()
                         .addComponent(btnGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEliminar)))
@@ -130,26 +237,28 @@ public class PanelLibros extends javax.swing.JPanel {
                     .addComponent(btnNuevo)
                     .addComponent(btnGuardar)
                     .addComponent(btnEliminar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(idAutor)
+                    .addComponent(idCategoria))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEditorial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboAutores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(22, 22, 22))
         );
 
         panelTabla.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        tabla.setModel(new javax.swing.table.DefaultTableModel(
+        tablaLibros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -160,7 +269,7 @@ public class PanelLibros extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(tabla);
+        jScrollPane2.setViewportView(tablaLibros);
 
         javax.swing.GroupLayout panelTablaLayout = new javax.swing.GroupLayout(panelTabla);
         panelTabla.setLayout(panelTablaLayout);
@@ -168,7 +277,7 @@ public class PanelLibros extends javax.swing.JPanel {
             panelTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
         panelTablaLayout.setVerticalGroup(
@@ -179,6 +288,70 @@ public class PanelLibros extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        panelTablaAutores.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        tablaAutores.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tablaAutores);
+
+        javax.swing.GroupLayout panelTablaAutoresLayout = new javax.swing.GroupLayout(panelTablaAutores);
+        panelTablaAutores.setLayout(panelTablaAutoresLayout);
+        panelTablaAutoresLayout.setHorizontalGroup(
+            panelTablaAutoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTablaAutoresLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        panelTablaAutoresLayout.setVerticalGroup(
+            panelTablaAutoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTablaAutoresLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        panelTablaCategorias.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        tablaCategorias.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        scrollbar.setViewportView(tablaCategorias);
+
+        javax.swing.GroupLayout panelTablaCategoriasLayout = new javax.swing.GroupLayout(panelTablaCategorias);
+        panelTablaCategorias.setLayout(panelTablaCategoriasLayout);
+        panelTablaCategoriasLayout.setHorizontalGroup(
+            panelTablaCategoriasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTablaCategoriasLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(scrollbar, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        panelTablaCategoriasLayout.setVerticalGroup(
+            panelTablaCategoriasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTablaCategoriasLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(scrollbar, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -186,9 +359,17 @@ public class PanelLibros extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelTabla, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlCampos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(panelTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(pnlCampos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(3, 3, 3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(panelTablaAutores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelTablaCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,6 +377,10 @@ public class PanelLibros extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(pnlCampos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelTablaAutores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelTablaCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(7, 7, 7)
                 .addComponent(panelTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -203,34 +388,112 @@ public class PanelLibros extends javax.swing.JPanel {
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // TODO add your handling code here:
+        limpiar();
+
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
+        accionGuardar();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
+        eliminar();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
+    private void txtAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAutorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAutorActionPerformed
 
+    private void cargarTablaAutores(){
+        String [] titulos = {"Id", "Nombre", "Apellido"};
+        List<Autor> autores = autorServicio.listar();
+        modeloAutores = new DefaultTableModel(null, titulos);
+        for(Autor a : autores) {
+            modeloAutores.addRow(a.dataAsVector());
+        }
+        tablaAutores.setModel(modeloAutores);
+    }
+
+    private void listenerTablaAutores(){
+        tablaAutores.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(tablaAutores.getSelectedRow() != -1) {
+                    int fila = tablaAutores.getSelectedRow();
+                    idAutor.setText(tablaAutores.getValueAt(fila, tablaAutores.getColumn("Id").getModelIndex()).toString());
+                    txtAutor.setText(tablaAutores.getValueAt(fila, tablaAutores.getColumn("Nombre").getModelIndex()).toString());
+                }
+            }
+        });
+    }
+    private void cargarTablaCategorias(){
+        String [] titulos = {"Id", "Nombre"};
+        List<Categoria> autores = categoriaServicio.listar();
+        modeloCategorias = new DefaultTableModel(null, titulos);
+        for(Categoria a : autores) {
+            modeloCategorias.addRow(a.dataAsVector());
+        }
+        tablaCategorias.setModel(modeloCategorias);
+    }
+
+    private void listenerTablaCategorias(){
+        tablaCategorias.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(tablaCategorias.getSelectedRow() != -1) {
+                    int fila = tablaCategorias.getSelectedRow();
+                    idCategoria.setText(tablaCategorias.getValueAt(fila, tablaCategorias.getColumn("Id").getModelIndex()).toString());
+                    txtCategoria.setText(tablaCategorias.getValueAt(fila, tablaCategorias.getColumn("Nombre").getModelIndex()).toString());
+                }
+            }
+        });
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox<String> comboAutores;
-    private javax.swing.JComboBox<String> comboCategorias;
+    private javax.swing.JLabel idAutor;
+    private javax.swing.JLabel idCategoria;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel panelTabla;
+    private javax.swing.JPanel panelTablaAutores;
+    private javax.swing.JPanel panelTablaCategorias;
     private javax.swing.JPanel pnlCampos;
-    private javax.swing.JTable tabla;
+    private javax.swing.JScrollPane scrollbar;
+    private javax.swing.JTable tablaAutores;
+    private javax.swing.JTable tablaCategorias;
+    private javax.swing.JTable tablaLibros;
+    private javax.swing.JTextField txtAutor;
+    private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtEditorial;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
+
+    @Override
+    public void suscribir(Subscriptor s) {
+        subscriptors.add(s);
+    }
+
+    @Override
+    public void unsuscribir(Subscriptor s) {
+        subscriptors.remove(s);
+    }
+
+    @Override
+    public void actualizar() {
+        cargarTablaCategorias();
+        cargarTablaAutores();
+        for(Subscriptor s: subscriptors) {
+            s.actualizar();
+        }
+    }
     // End of variables declaration//GEN-END:variables
 }

@@ -3,18 +3,18 @@ package com.libreria.catalogo.entidad;
 
 public class Libro{
     private String id, nombre, editorial;
-    private String autor;
-    private String categoria;
+    private Autor autor;
+    private Categoria categoria;
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
-    public Libro(String id, String nombre, String editorial, String autor, String categoria) {
+    public Libro(String id, String nombre, String editorial, Autor autor, Categoria categoria) {
         this.id = id;
         this.nombre = nombre;
         this.editorial = editorial;
@@ -46,15 +46,28 @@ public class Libro{
         this.editorial = editorial;
     }
 
-    public String getAutor() {
+    public Autor getAutor() {
         return autor;
     }
 
-    public void setAutor(String autor) {
+    public void setAutor(Autor autor) {
         this.autor = autor;
     }
 
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "id='" + id + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", editorial='" + editorial + '\'' +
+                ", id_autor='" + autor.getId() + '\'' +
+                ", autor='" + autor.getNombre() + '\'' +
+                ", id_categoria='" + categoria.getId() + '\'' +
+                ", categoria='" + categoria.getNombre() + '\'' +
+                '}';
+    }
+
     public String [] dataAsVector(){
-        return new String[]{id, nombre, editorial,autor};
+        return new String[]{id, nombre, editorial,autor.getNombre(), categoria.getNombre()};
     }
 }

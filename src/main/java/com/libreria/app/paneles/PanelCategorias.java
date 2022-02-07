@@ -4,22 +4,25 @@
  */
 package com.libreria.app.paneles;
 
+import com.libreria.app.Observador;
 import com.libreria.catalogo.entidad.Categoria;
 import com.libreria.compartido.Servicio;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
  * @author carri
  */
-public class PanelCategorias extends javax.swing.JPanel {
+public class PanelCategorias extends javax.swing.JPanel implements Observador {
 
     DefaultTableModel modelo;
     private Servicio servicio;
+    private List<Subscriptor> subscriptors = new ArrayList<Subscriptor>();
     /**
      * Creates new form BasePanel
      */
@@ -65,16 +68,19 @@ public class PanelCategorias extends javax.swing.JPanel {
     private void crear(){
         servicio.guardar(crearObjeto());
         cargarTabla();
+        actualizar();
     }
 
     private void editar(){
         servicio.editar(crearObjeto());
         cargarTabla();
+        actualizar();
     }
 
     private void eliminar(){
         servicio.eliminar(crearObjeto());
         cargarTabla();
+        actualizar();
     }
 
     private boolean verificarNuevo(){
@@ -259,5 +265,22 @@ public class PanelCategorias extends javax.swing.JPanel {
     private javax.swing.JTable tabla;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
+
+    @Override
+    public void suscribir(Subscriptor s) {
+        subscriptors.add(s);
+    }
+
+    @Override
+    public void unsuscribir(Subscriptor s) {
+        subscriptors.remove(s);
+    }
+
+    @Override
+    public void actualizar() {
+        for(Subscriptor s: subscriptors) {
+            s.actualizar();
+        }
+    }
     // End of variables declaration//GEN-END:variables
 }

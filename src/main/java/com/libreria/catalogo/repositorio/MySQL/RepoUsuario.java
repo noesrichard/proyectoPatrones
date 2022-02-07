@@ -55,11 +55,29 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
         sql = "INSERT INTO usuario (username, password) VALUES(?,?)";
         try {
             ps = conexion.prepareStatement(sql);
+            ps.setString(1, entidad.getUsername());
+            ps.setString(2, entidad.getPassword());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        guardarRol(entidad);
         return entidad;
+    }
+
+    private void guardarRol(Usuario u){
+        eliminarRoles(u.getUsername());
+        for(Permiso p : u.getPermisos()) {
+            sql = "INSERT INTO roles_usuario (usuario, rol) VALUES(?,?)";
+            try {
+                ps = conexion.prepareStatement(sql);
+                ps.setString(1, u.getUsername());
+                ps.setString(2, String.valueOf(p.getId()));
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -71,6 +89,7 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        guardarRol(entidad);
         return porId(id);
     }
 
@@ -87,14 +106,24 @@ public class RepoUsuario extends MySQLRepositorio<Usuario, String> {
         return user;
     }
 
-    private List<Permiso> getPermisosUsuario(String username){
-        List<Permiso> permisos = new ArrayList<Permiso>();
-        sql="SELECT rol from roles_usuario WHERE usuario='"+username+"'";
+    private void eliminarRoles(String username){
+        sql = "DELETE FROM roles_usuario WHERE usuario='"+username+"'";
         try {
             ps = conexion.prepareStatement(sql);
-            rs = ps.executeQuery();
-            while(rs.next()){
-                permisos.add(Permiso.getById(rs.getInt("rol")));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Permiso> getPermisosUsuario(String username){
+        List<Permiso> permisos = new ArrayList<Permiso>();
+        String sqlRol="SELECT rol from roles_usuario WHERE usuario='"+username+"'";
+        try {
+            PreparedStatement psRol = conexion.prepareStatement(sqlRol);
+            ResultSet rsRol = psRol.executeQuery();
+            while(rsRol.next()){
+                permisos.add(Permiso.getById(rsRol.getInt("rol")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -4,7 +4,15 @@
  */
 package com.libreria.app.paneles;
 
+import com.libreria.catalogo.entidad.Permiso;
+import com.libreria.catalogo.entidad.Usuario;
 import com.libreria.compartido.Servicio;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -13,12 +21,117 @@ import com.libreria.compartido.Servicio;
 public class PanelUsuarios extends javax.swing.JPanel {
 
     private Servicio servicio;
+    DefaultTableModel modelo;
+    Usuario u;
     /**
      * Creates new form BasePanel
      */
     public PanelUsuarios(Servicio usuarioServicio) {
         this.servicio = usuarioServicio;
         initComponents();
+        cargarTabla();
+        listenerTabla();
+    }
+
+    private void cargarTabla(){
+        String [] titulos = {"Id", "Nombre"};
+        List<Usuario> autores = servicio.listar();
+        modelo = new DefaultTableModel(null, titulos);
+        for(Usuario a : autores) {
+            modelo.addRow(a.dataAsVector());
+        }
+        tabla.setModel(modelo);
+    }
+
+    private void limpiar(){
+        txtUsername.setText("");
+        txtClave.setText("");
+        txtUsername.setEditable(true);
+    }
+
+    private void listenerTabla(){
+        tabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(tabla.getSelectedRow() != -1) {
+                    txtUsername.setEditable(false);
+                    int fila = tabla.getSelectedRow();
+                    txtUsername.setText(tabla.getValueAt(fila, tabla.getColumn("Id").getModelIndex()).toString());
+                    txtClave.setText(tabla.getValueAt(fila, tabla.getColumn("Nombre").getModelIndex()).toString());
+                    buscar(txtUsername.getText());
+                    checkBoxs();
+                }
+            }
+        });
+    }
+
+    private Usuario crearObjeto(){
+        return new Usuario(txtUsername.getText(), txtClave.getText(), getPermisos());
+    }
+
+    private List<Permiso> getPermisos(){
+        List<Permiso> permisos = new ArrayList<Permiso>();
+        if(chkLeer.isSelected()) {
+           permisos.add(Permiso.LEER);
+        }
+        if(chkElminar.isSelected()) {
+           permisos.add(Permiso.ELIMINAR);
+        }
+        if(chkEditar.isSelected()) {
+           permisos.add(Permiso.EDITAR);
+        }
+        if(chkCrear.isSelected()) {
+           permisos.add(Permiso.CREAR);
+        }
+        return permisos;
+    }
+
+
+    private void checkBoxs(){
+        if(u.tienePermiso(Permiso.LEER)) {
+            chkLeer.setSelected(true);
+        }else{ chkLeer.setSelected(false);}
+        if(u.tienePermiso(Permiso.CREAR)) {
+            chkCrear.setSelected(true);
+        }else{ chkCrear.setSelected(false);}
+        if(u.tienePermiso(Permiso.EDITAR)) {
+            chkEditar.setSelected(true);
+        }else{ chkEditar.setSelected(false);}
+        if(u.tienePermiso(Permiso.ELIMINAR)) {
+            chkElminar.setSelected(true);
+        }else{ chkElminar.setSelected(false);}
+
+    }
+
+    private void buscar(String username){
+        u = (Usuario) servicio.buscar(new Usuario(username, ""));
+    }
+
+    private void crear(){
+        servicio.guardar(crearObjeto());
+        cargarTabla();
+    }
+
+    private void editar(){
+        servicio.editar(crearObjeto());
+        cargarTabla();
+    }
+
+    private void eliminar(){
+        servicio.eliminar(crearObjeto());
+        cargarTabla();
+    }
+
+    private boolean verificarNuevo(){
+        return (servicio.buscar(crearObjeto()) == null);
+    }
+
+    private void accionGuardar(){
+        if(verificarNuevo()) {
+            crear();
+        }else {
+            editar();
+        }
     }
 
     /**
@@ -36,10 +149,10 @@ public class PanelUsuarios extends javax.swing.JPanel {
         txtClave = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
+        chkLeer = new javax.swing.JCheckBox();
+        chkCrear = new javax.swing.JCheckBox();
+        chkEditar = new javax.swing.JCheckBox();
+        chkElminar = new javax.swing.JCheckBox();
         panelTabla = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
@@ -73,23 +186,23 @@ public class PanelUsuarios extends javax.swing.JPanel {
 
         jLabel2.setText("Clave:");
 
-        jCheckBox1.setText("Leer");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        chkLeer.setText("Leer");
+        chkLeer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                chkLeerActionPerformed(evt);
             }
         });
 
-        jCheckBox2.setText("Crear");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+        chkCrear.setText("Crear");
+        chkCrear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
+                chkCrearActionPerformed(evt);
             }
         });
 
-        jCheckBox3.setText("Editar");
+        chkEditar.setText("Editar");
 
-        jCheckBox4.setText("Eliminar");
+        chkElminar.setText("Eliminar");
 
         javax.swing.GroupLayout pnlCamposLayout = new javax.swing.GroupLayout(pnlCampos);
         pnlCampos.setLayout(pnlCamposLayout);
@@ -110,13 +223,13 @@ public class PanelUsuarios extends javax.swing.JPanel {
                 .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlCamposLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jCheckBox1)
+                        .addComponent(chkLeer)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox2)
+                        .addComponent(chkCrear)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCheckBox3)
+                        .addComponent(chkEditar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox4)
+                        .addComponent(chkElminar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnEliminar))
                     .addGroup(pnlCamposLayout.createSequentialGroup()
@@ -137,10 +250,10 @@ public class PanelUsuarios extends javax.swing.JPanel {
                 .addGroup(pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtClave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jCheckBox4)
-                    .addComponent(jCheckBox3))
+                    .addComponent(chkLeer)
+                    .addComponent(chkCrear)
+                    .addComponent(chkElminar)
+                    .addComponent(chkEditar))
                 .addGap(22, 22, 22))
             .addGroup(pnlCamposLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
@@ -204,24 +317,27 @@ public class PanelUsuarios extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    private void chkCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkCrearActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
+    }//GEN-LAST:event_chkCrearActionPerformed
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    private void chkLeerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkLeerActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    }//GEN-LAST:event_chkLeerActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // TODO add your handling code here:
+        limpiar();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
+        accionGuardar();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
+        eliminar();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
 
@@ -229,10 +345,10 @@ public class PanelUsuarios extends javax.swing.JPanel {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox chkCrear;
+    private javax.swing.JCheckBox chkEditar;
+    private javax.swing.JCheckBox chkElminar;
+    private javax.swing.JCheckBox chkLeer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane2;

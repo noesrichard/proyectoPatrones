@@ -1,7 +1,9 @@
 package com.libreria.catalogo.repositorio.MySQL;
 
+import com.libreria.catalogo.entidad.Autor;
 import com.libreria.catalogo.entidad.Categoria;
 import com.libreria.catalogo.entidad.Inventario;
+import com.libreria.catalogo.entidad.Libro;
 import com.libreria.compartido.MySQLRepositorio;
 
 import java.sql.PreparedStatement;
@@ -18,15 +20,25 @@ public class RepoInventario extends MySQLRepositorio<Inventario, String> {
     @Override
     public List<Inventario> listar() {
         List<Inventario> lista = new ArrayList<>();
-        sql = "SELECT * FROM inventario";
+        sql = "select i.id as id_inventario, i.prestado as prestado, l.*,a.nombre as nombre_autor, a.apellido as apellido_autor,c.nombre as nombre_categoria from inventario i, libro l, autor a, categoria c where i.libro = l.id and a.id = l.autor and c.id = l.categoria";
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
                 lista.add(
                         new Inventario(
+                                rs.getString("id_inventario"),
+                                new Libro(
                                 rs.getString("id"),
-                                rs.getString("libro"),
+                                rs.getString("nombre"),
+                                rs.getString("editorial"),
+                                new Autor( rs.getString("autor"),
+                                           rs.getString("nombre_autor"),
+                                           rs.getString("apellido_autor")
+                                          ),
+                                new Categoria(rs.getString("categoria"),
+                                        rs.getString("nombre_categoria"))
+                                ),
                                 rs.getString("prestado")
                         )
                 );
@@ -40,13 +52,23 @@ public class RepoInventario extends MySQLRepositorio<Inventario, String> {
     @Override
     public Inventario porId(String id) {
         Inventario inventario = null;
-        sql = "SELECT * FROM inventario WHERE id="+id;
+        sql = "select i.id as id_inventario, i.prestado as prestado, l.*,a.nombre as nombre_autor, a.apellido as apellido_autor,c.nombre as nombre_categoria from inventario i, libro l, autor a, categoria c where i.libro = l.id and a.id = l.autor and c.id = l.categoria and i.id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
-                inventario = new Inventario( rs.getString("id"),
-                        rs.getString("libro"),
+                inventario = new Inventario( rs.getString("id_inventario"),
+                        new Libro(
+                                rs.getString("id"),
+                                rs.getString("nombre"),
+                                rs.getString("editorial"),
+                                new Autor( rs.getString("autor"),
+                                           rs.getString("nombre_autor"),
+                                           rs.getString("apellido_autor")
+                                          ),
+                                new Categoria(rs.getString("categoria"),
+                                        rs.getString("nombre_categoria"))
+                                ),
                         rs.getString("prestado"));
             }
         } catch (SQLException e) {
@@ -61,19 +83,31 @@ public class RepoInventario extends MySQLRepositorio<Inventario, String> {
         sql = "INSERT INTO inventario (libro,prestado) VALUES (?,?)";
         try {
             ps = conexion.prepareStatement(sql);
+            ps.setString(1, entidad.getLibro().getId());
+            ps.setString(2,entidad.getPrestado());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        sql = "SELECT * FROM inventario ORDER BY id DESC LIMIT 1";
+        sql = "select i.id as id_inventario, i.prestado as prestado, l.*,a.nombre as nombre_autor, a.apellido as apellido_autor,c.nombre as nombre_categoria from inventario i, libro l, autor a, categoria c where i.libro = l.id and a.id = l.autor and c.id = l.categoria ORDER BY i.id DESC LIMIT 1";
         Inventario inventario = null;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
                 inventario = new Inventario( rs.getString("id"),
-                        rs.getString("libro"),
+                        new Libro(
+                                rs.getString("id"),
+                                rs.getString("nombre"),
+                                rs.getString("editorial"),
+                                new Autor( rs.getString("autor"),
+                                           rs.getString("nombre_autor"),
+                                           rs.getString("apellido_autor")
+                                          ),
+                                new Categoria(rs.getString("categoria"),
+                                        rs.getString("nombre_categoria"))
+                                ),
                         rs.getString("prestado"));
             }
         } catch (SQLException e) {
@@ -84,7 +118,7 @@ public class RepoInventario extends MySQLRepositorio<Inventario, String> {
 
     @Override
     public Inventario editar(Inventario entidad, String id) {
-       sql = "UPDATE inventario SET libro="+entidad.getLibro() + ", prestado="+entidad.getPrestado()+" WHERE id="+id;
+       sql = "UPDATE inventario SET libro="+entidad.getLibro().getId() + ", prestado='"+entidad.getPrestado()+"' WHERE id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();

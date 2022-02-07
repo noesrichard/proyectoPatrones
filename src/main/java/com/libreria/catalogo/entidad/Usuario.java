@@ -22,7 +22,11 @@ public class Usuario {
                 this.username = username;
                 this.password = password;
         }
-
+        public Usuario(String username, String password, List<Permiso> permisos) {
+                this.username = username;
+                this.password = password;
+                this.permisos = permisos;
+        }
         public String getUsername() {
                 return username;
         }
@@ -38,6 +42,11 @@ public class Usuario {
         public void setPassword(String password) {
                 this.password = password;
         }
+
+        public boolean tienePermiso(Permiso permiso){
+            return permisos.contains(permiso);
+        }
+
         public String [] dataAsVector(){
         return new String[]{username, password};
         }

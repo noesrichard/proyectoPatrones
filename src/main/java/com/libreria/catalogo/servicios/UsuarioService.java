@@ -2,6 +2,7 @@ package com.libreria.catalogo.servicios;
 
 import com.libreria.catalogo.entidad.Permiso;
 import com.libreria.catalogo.entidad.Usuario;
+import com.libreria.catalogo.repositorio.MySQL.RepoUsuario;
 import com.libreria.compartido.Repositorio;
 import com.libreria.compartido.Servicio;
 

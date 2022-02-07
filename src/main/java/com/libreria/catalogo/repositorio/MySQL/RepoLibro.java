@@ -1,6 +1,7 @@
 package com.libreria.catalogo.repositorio.MySQL;
 
 
+import com.libreria.catalogo.entidad.Autor;
 import com.libreria.catalogo.entidad.Categoria;
 import com.libreria.catalogo.entidad.Libro;
 import com.libreria.compartido.MySQLRepositorio;
@@ -19,7 +20,7 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
     @Override
     public List<Libro> listar() {
         List<Libro> lista = new ArrayList<>();
-        sql="SELECT * FROM libro";
+        sql="select l.*,a.nombre as nombre_autor, a.apellido as apellido_autor,c.nombre as nombre_categoria from libro l, autor a, categoria c where a.id = l.autor and c.id = l.categoria";
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -29,11 +30,16 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
                                 rs.getString("id"),
                                 rs.getString("nombre"),
                                 rs.getString("editorial"),
-                                rs.getString("autor"),
-                                rs.getString("categoria")
+                                new Autor( rs.getString("autor"),
+                                           rs.getString("nombre_autor"),
+                                           rs.getString("apellido_autor")
+                                          ),
+                                new Categoria(rs.getString("categoria"),
+                                        rs.getString("nombre_categoria"))
                         )
                 );
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -43,17 +49,28 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
     @Override
     public Libro porId(String id) {
         Libro libro = null;
-        sql = "SELECT * FROM libro WHERE id="+id;
+        Autor autor = null;
+        Categoria categoria = null;
+        sql = "select l.*,a.nombre as nombre_autor, a.apellido as apellido_autor,c.nombre as nombre_categoria from libro l, autor a, categoria c where a.id = l.autor and c.id = l.categoria and l.id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
+                autor = new Autor(
+                        rs.getString("autor"),
+                        rs.getString("nombre_autor"),
+                        rs.getString("apellido_autor")
+                        );
+                categoria = new Categoria(
+                        rs.getString("categoria"),
+                        rs.getString("nombre_categoria")
+                        );
                 libro =  new Libro(
                         rs.getString("id"),
                         rs.getString("nombre"),
                         rs.getString("editorial"),
-                        rs.getString("autor"),
-                        rs.getString("categoria")
+                        autor,
+                        categoria
                 );
             }
         } catch (SQLException e) {
@@ -65,26 +82,41 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
 
     @Override
     public Libro guardar(Libro entidad) {
-        sql = "INSERT INTO libro (nombre,editorial, autor, categoria)";
+        sql = "INSERT INTO libro (nombre,editorial, autor, categoria) values(?,?,?,?)";
         try {
             ps = conexion.prepareStatement(sql);
+            ps.setString(1, entidad.getNombre());
+            ps.setString(2, entidad.getEditorial());
+            ps.setString(3, entidad.getAutor().getId());
+            ps.setString(4, entidad.getCategoria().getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        sql = "SELECT * FROM libro ORDER BY id DESC LIMIT 1";
+        sql = "select l.*,a.nombre as nombre_autor, a.apellido as apellido_autor,c.nombre as nombre_categoria from libro l, autor a, categoria c where a.id = l.autor and c.id = l.categoria order by id desc limit 1";
         Libro libro = null;
+        Autor autor = null;
+        Categoria categoria = null;
         try {
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()){
-                libro = new Libro(
+                autor = new Autor(
+                        rs.getString("autor"),
+                        rs.getString("nombre_autor"),
+                        rs.getString("apellido_autor")
+                        );
+                categoria = new Categoria(
+                        rs.getString("categoria"),
+                        rs.getString("nombre_categoria")
+                        );
+                libro =  new Libro(
                         rs.getString("id"),
                         rs.getString("nombre"),
                         rs.getString("editorial"),
-                        rs.getString("autor"),
-                        rs.getString("categoria")
+                        autor,
+                        categoria
                 );
             }
         } catch (SQLException e) {
@@ -96,8 +128,9 @@ public class RepoLibro extends MySQLRepositorio<Libro, String> {
     @Override
     public Libro editar(Libro entidad, String id) {
         sql="UPDATE  libro SET nombre='"+entidad.getNombre() +
-                "', editorial='"+entidad.getEditorial() + "', autor="+entidad.getAutor() +
-                ", categoria=" + entidad.getCategoria()+"";
+                "', editorial='"+entidad.getEditorial() + "', autor="+entidad.getAutor().getId() +
+                ", categoria=" + entidad.getCategoria().getId()+
+                " where id="+id;
         try {
             ps = conexion.prepareStatement(sql);
             ps.executeUpdate();
