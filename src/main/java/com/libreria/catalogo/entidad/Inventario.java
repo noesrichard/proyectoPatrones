@@ -38,4 +38,8 @@ public class Inventario {
     public void setPrestado(String prestado) {
         this.prestado = prestado;
     }
+    public String [] dataAsVector(){
+        return new String[]{id, libro,prestado};
+    }
+
 }

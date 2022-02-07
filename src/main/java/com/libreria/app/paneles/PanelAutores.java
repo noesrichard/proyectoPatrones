@@ -4,17 +4,89 @@
  */
 package com.libreria.app.paneles;
 
-/**
- *
+import com.libreria.catalogo.entidad.Autor;
+import com.libreria.compartido.Servicio;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
+/** *
  * @author carri
  */
 public class PanelAutores extends javax.swing.JPanel {
 
+    DefaultTableModel modelo;
+    private Servicio servicio;
     /**
      * Creates new form BasePanel
      */
-    public PanelAutores() {
+    public PanelAutores(Servicio autorServicio) {
+        this.servicio = autorServicio;
         initComponents();
+        cargarTabla();
+        listenerTabla();
+    }
+
+    private void cargarTabla(){
+        String [] titulos = {"Id", "Nombre", "Apellido"};
+        List<Autor> autores = servicio.listar();
+        modelo = new DefaultTableModel(null, titulos);
+        for(Autor a : autores) {
+            modelo.addRow(a.dataAsVector());
+        }
+        tabla.setModel(modelo);
+    }
+
+    private void limpiar(){
+        txtId.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+    }
+
+    private void listenerTabla(){
+        tabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(tabla.getSelectedRow() != -1) {
+                    int fila = tabla.getSelectedRow();
+                    txtId.setText(tabla.getValueAt(fila, tabla.getColumn("Id").getModelIndex()).toString());
+                    txtNombre.setText(tabla.getValueAt(fila, tabla.getColumn("Nombre").getModelIndex()).toString());
+                    txtApellido.setText(tabla.getValueAt(fila, tabla.getColumn("Apellido").getModelIndex()).toString());
+                }
+            }
+        });
+    }
+
+    private Autor crearObjeto(){
+        return new Autor(txtId.getText(), txtNombre.getText(), txtApellido.getText());
+    }
+
+    private void crear(){
+        servicio.guardar(crearObjeto());
+        cargarTabla();
+    }
+
+    private void editar(){
+        servicio.editar(crearObjeto());
+        cargarTabla();
+    }
+
+    private void eliminar(){
+        servicio.eliminar(crearObjeto());
+        cargarTabla();
+    }
+
+    private boolean verificarNuevo(){
+        return (txtId.getText().equals(""));
+    }
+
+    private void accionGuardar(){
+        if(verificarNuevo()) {
+            crear();
+        }else {
+            editar();
+        }
     }
 
     /**
@@ -43,10 +115,25 @@ public class PanelAutores extends javax.swing.JPanel {
         txtId.setEditable(false);
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("ID:");
 
@@ -158,6 +245,18 @@ public class PanelAutores extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        limpiar();
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        accionGuardar();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        eliminar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

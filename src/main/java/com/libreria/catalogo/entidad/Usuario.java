@@ -38,4 +38,7 @@ public class Usuario {
         public void setPassword(String password) {
                 this.password = password;
         }
+        public String [] dataAsVector(){
+        return new String[]{username, password};
+        }
 }

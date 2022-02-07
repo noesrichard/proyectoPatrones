@@ -53,4 +53,8 @@ public class Libro{
     public void setAutor(String autor) {
         this.autor = autor;
     }
+
+    public String [] dataAsVector(){
+        return new String[]{id, nombre, editorial,autor};
+    }
 }

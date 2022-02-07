@@ -24,4 +24,7 @@ public class Categoria {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+    public String [] dataAsVector(){
+        return new String[]{id, nombre};
+    }
 }

@@ -5,6 +5,9 @@
 package com.libreria.app;
 
 import com.libreria.app.paneles.PanelUsuarios;
+import com.libreria.catalogo.repositorio.MySQLRepoFactory;
+import com.libreria.catalogo.repositorio.RepoFactory;
+import com.libreria.catalogo.servicios.ServiciosFactory;
 
 /**
  *
@@ -12,10 +15,14 @@ import com.libreria.app.paneles.PanelUsuarios;
  */
 public class Main extends javax.swing.JFrame {
 
+    MySQLRepoFactory fabricaRepositorios;
+    ServiciosFactory fabricaServicios;
     /**
      * Creates new form Main
      */
     public Main() {
+        fabricaRepositorios = new MySQLRepoFactory();
+        fabricaServicios = new ServiciosFactory(fabricaRepositorios);
         initComponents();
     }
 
@@ -27,11 +34,11 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        panelAutores1 = new com.libreria.app.paneles.PanelAutores();
-        panelCategorias1 = new com.libreria.app.paneles.PanelCategorias();
-        panelLibros1 = new com.libreria.app.paneles.PanelLibros();
-        panelInventario1 = new com.libreria.app.paneles.PanelInventario();
-        panelUsuarios2 = new com.libreria.app.paneles.PanelUsuarios();
+        panelAutores1 = new com.libreria.app.paneles.PanelAutores(fabricaServicios.getServicio(ServiciosFactory.AUTOR));
+        panelCategorias1 = new com.libreria.app.paneles.PanelCategorias(fabricaServicios.getServicio(ServiciosFactory.CATEGORIA));
+        panelLibros1 = new com.libreria.app.paneles.PanelLibros(fabricaServicios.getServicio(ServiciosFactory.LIBRO));
+        panelInventario1 = new com.libreria.app.paneles.PanelInventario(fabricaServicios.getServicio(ServiciosFactory.INVENTARIO));
+        panelUsuarios2 = new com.libreria.app.paneles.PanelUsuarios(fabricaServicios.getServicio(ServiciosFactory.USUARIO));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 

@@ -60,6 +60,7 @@ public class RepoCategoria extends MySQLRepositorio<Categoria,String> {
         sql = "INSERT INTO categoria (nombre) VALUES (?)";
         try {
             ps = conexion.prepareStatement(sql);
+            ps.setString(1,entidad.getNombre());
             ps.executeUpdate();
             conexion.commit();
         } catch (SQLException e) {

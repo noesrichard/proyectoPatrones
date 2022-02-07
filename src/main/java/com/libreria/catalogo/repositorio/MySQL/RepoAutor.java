@@ -66,7 +66,6 @@ public class RepoAutor extends MySQLRepositorio<Autor, String> {
             ps.setString(1, entidad.getNombre());
             ps.setString(2,entidad.getApellido());
             ps.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

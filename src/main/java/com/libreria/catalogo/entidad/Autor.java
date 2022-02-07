@@ -46,4 +46,8 @@ public class Autor {
                 ", apellido='" + apellido + '\'' +
                 '}';
     }
+
+    public String [] dataAsVector(){
+        return new String[]{id, nombre, apellido};
+    }
 }

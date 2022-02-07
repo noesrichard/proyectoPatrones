@@ -4,17 +4,89 @@
  */
 package com.libreria.app.paneles;
 
+import com.libreria.catalogo.entidad.Categoria;
+import com.libreria.compartido.Servicio;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
+
 /**
  *
  * @author carri
  */
 public class PanelCategorias extends javax.swing.JPanel {
 
+    DefaultTableModel modelo;
+    private Servicio servicio;
     /**
      * Creates new form BasePanel
      */
-    public PanelCategorias() {
+    public PanelCategorias(Servicio categoriaServicio) {
+        this.servicio = categoriaServicio;
         initComponents();
+        cargarTabla();
+        listenerTabla();
+    }
+
+    private void cargarTabla(){
+        String [] titulos = {"Id", "Nombre"};
+        List<Categoria> autores = servicio.listar();
+        modelo = new DefaultTableModel(null, titulos);
+        for(Categoria a : autores) {
+            modelo.addRow(a.dataAsVector());
+        }
+        tabla.setModel(modelo);
+    }
+
+    private void limpiar(){
+        txtId.setText("");
+        txtNombre.setText("");
+    }
+
+    private void listenerTabla(){
+        tabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(tabla.getSelectedRow() != -1) {
+                    int fila = tabla.getSelectedRow();
+                    txtId.setText(tabla.getValueAt(fila, tabla.getColumn("Id").getModelIndex()).toString());
+                    txtNombre.setText(tabla.getValueAt(fila, tabla.getColumn("Nombre").getModelIndex()).toString());
+                }
+            }
+        });
+    }
+
+    private Categoria crearObjeto(){
+        return new Categoria(txtId.getText(), txtNombre.getText());
+    }
+
+    private void crear(){
+        servicio.guardar(crearObjeto());
+        cargarTabla();
+    }
+
+    private void editar(){
+        servicio.editar(crearObjeto());
+        cargarTabla();
+    }
+
+    private void eliminar(){
+        servicio.eliminar(crearObjeto());
+        cargarTabla();
+    }
+
+    private boolean verificarNuevo(){
+        return (txtId.getText().equals(""));
+    }
+
+    private void accionGuardar(){
+        if(verificarNuevo()) {
+            crear();
+        }else {
+            editar();
+        }
     }
 
     /**
@@ -41,10 +113,25 @@ public class PanelCategorias extends javax.swing.JPanel {
         txtId.setEditable(false);
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("ID:");
 
@@ -68,11 +155,9 @@ public class PanelCategorias extends javax.swing.JPanel {
                         .addGap(146, 146, 146)
                         .addComponent(btnGuardar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnEliminar)
-                        .addGap(0, 96, Short.MAX_VALUE))
-                    .addGroup(pnlCamposLayout.createSequentialGroup()
-                        .addComponent(btnNuevo)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addComponent(btnEliminar))
+                    .addComponent(btnNuevo))
+                .addGap(0, 96, Short.MAX_VALUE))
         );
         pnlCamposLayout.setVerticalGroup(
             pnlCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -145,6 +230,21 @@ public class PanelCategorias extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        limpiar();
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        accionGuardar();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        eliminar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
