@@ -4,17 +4,46 @@
  */
 package com.libreria.app;
 
+import com.libreria.catalogo.entidad.Usuario;
+import com.libreria.catalogo.entidad.UsuarioLoggeado;
+import com.libreria.catalogo.repositorio.MySQLRepoFactory;
+import com.libreria.catalogo.servicios.ServiciosFactory;
+import com.libreria.compartido.Servicio;
+
 /**
  *
  * @author carri
  */
 public class Login extends javax.swing.JFrame {
 
+    MySQLRepoFactory fabricaRepositorios;
+    ServiciosFactory fabricaServicios;
+    Servicio<Usuario> usuarioServicio;
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+        fabricaRepositorios = new MySQLRepoFactory();
+        fabricaServicios = new ServiciosFactory(fabricaRepositorios);
+
+         usuarioServicio = fabricaServicios.getServicio(ServiciosFactory.USUARIO);
+
+
+    }
+
+    private void login(){
+        Usuario u = new Usuario(txtUsername.getText(), txtPassword.getText());
+        Usuario usuarioLoggeado = usuarioServicio.buscar(u);
+        if(usuarioLoggeado != null) {
+            UsuarioLoggeado usuarioVerificado = UsuarioLoggeado._getUsuario();
+            usuarioVerificado.setUsername(usuarioLoggeado.getUsername());
+            usuarioVerificado.setPassword(usuarioLoggeado.getPassword());
+            usuarioVerificado.setPermisos(usuarioLoggeado.getPermisos());
+            Main main = new Main();
+            main.setVisible(true);
+            this.dispose();
+        }
     }
 
     /**
@@ -89,6 +118,7 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        login();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

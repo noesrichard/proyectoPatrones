@@ -6,6 +6,8 @@ package com.libreria.app.paneles;
 
 import com.libreria.app.Observador;
 import com.libreria.catalogo.entidad.Autor;
+import com.libreria.catalogo.entidad.UsuarioLoggeado;
+import com.libreria.catalogo.proxy.ProxyServicio;
 import com.libreria.compartido.Servicio;
 
 import javax.swing.event.ListSelectionEvent;
@@ -19,13 +21,13 @@ import java.util.List;
 public class PanelAutores extends javax.swing.JPanel implements Observador {
 
     DefaultTableModel modelo;
-    private Servicio servicio;
+    private ProxyServicio<Autor> servicio;
     private List<Subscriptor> subscriptors = new ArrayList<Subscriptor>();
     /**
      * Creates new form BasePanel
      */
     public PanelAutores(Servicio autorServicio) {
-        this.servicio = autorServicio;
+        this.servicio = new ProxyServicio<Autor>(autorServicio, UsuarioLoggeado._getUsuario());
         initComponents();
         cargarTabla();
         listenerTabla();
