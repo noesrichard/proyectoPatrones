@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class Conexion{
 
-    private static final Conexion instancia = null;
+    private static Conexion instancia = null;
     private Connection con;
 
     private Conexion(){
@@ -26,7 +26,7 @@ public class Conexion{
 
     public static Conexion _getConexion(){
         if(instancia == null){
-            return new Conexion();
+            instancia = new Conexion();
         }
         return instancia;
     }
